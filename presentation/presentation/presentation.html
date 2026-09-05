@@ -159,9 +159,15 @@ full_message = headers + user_message
 <section id="примеры-реализации-безопасный-код" class="slide level2">
 <h2>Примеры реализации (Безопасный код)</h2>
 <p>Прямая вставка ввода в строку заголовков - опасна</p>
-<pre><code>headers = f&quot;&quot;From: {user_email}\r\nTo: {admin}\r \ n\r \ n&quot;&quot;
-full_message = headers + user_message
- Любой \r\n в user_email создаст новый заголовок</code></pre>
+<pre><code>async function sendFeedback(userEmail: string, userMessage: string) {
+let transporter = nodemailer.createTransport({ /* config */ });
+// БЕЗОПАСНО: Библиотека сама экранирует спецсимволы в полях &#39;from&#39;, &#39;to&#39;, &#39;s
+let info = await transporter.sendMail({
+    from: userEmail, // Защищено nodemailer от CRLF
+    to: &quot;admin@mysite.com&quot;,
+    subject: &quot;New Feedback&quot;,
+    text: userMessage,
+});</code></pre>
 </section>
 <section id="последствия-эксплуатации" class="slide level2">
 <h2>Последствия эксплуатации</h2>

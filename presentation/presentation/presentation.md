@@ -115,9 +115,15 @@ full_message = headers + user_message
 
  Прямая вставка ввода в строку заголовков - опасна
 ```
-headers = f""From: {user_email}\r\nTo: {admin}\r \ n\r \ n""
-full_message = headers + user_message
- Любой \r\n в user_email создаст новый заголовок
+async function sendFeedback(userEmail: string, userMessage: string) {
+let transporter = nodemailer.createTransport({ /* config */ });
+// БЕЗОПАСНО: Библиотека сама экранирует спецсимволы в полях 'from', 'to', 's
+let info = await transporter.sendMail({
+    from: userEmail, // Защищено nodemailer от CRLF
+    to: "admin@mysite.com",
+    subject: "New Feedback",
+    text: userMessage,
+});
 ```
 
 ## Последствия эксплуатации
